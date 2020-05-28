@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import styled, { css,createGlobalStyle } from 'styled-components';
 import DFT from "./dft"
 import DrawCanvas from "./drawCanvas";
+import Tablebox from "./tableBox";
 
 // メインの処理
 // 定数
@@ -92,7 +93,9 @@ function onUpdatedAudioTime(event) {
 }
 
 function onMusicTime() {
-	audioElement.currentTime = timeSeek.value * audioElement.duration / 1000;
+	if(audioElement != null){
+		audioElement.currentTime = timeSeek.value * audioElement.duration / 1000;
+	}
 }
 
 // 音声ファイルが再生中か否か
@@ -187,7 +190,6 @@ function onAudioProcess(event) {
 // UI関連
 
 let fileSelector;
-let volumeButton;
 let playButton;
 let timeSeek;
 let navigation;
@@ -203,19 +205,17 @@ let dc;
 function onLoadf(event) {
 	//表示
 	canvas = document.getElementById('mainCanvas');
-	dc = new DrawCanvas(canvas);
+	dc = new DrawCanvas(canvas,window.innerWidth,window.innerHeight/4);
 	dc.drawCanvas(audioUrl);
 	console.log("onLoad");
 
 	// UIの初期化
 	fileSelector = document.getElementById("fileSelector");
 	fileSelector.addEventListener("change", onSelectedFile);
-	volumeButton = document.getElementById("volume");
-	volumeButton.addEventListener("click", onClickVolumeButton);
 	playButton = document.getElementById("play");
 	playButton.addEventListener("click", onClickPlayButton);
 	timeSeek = document.getElementById("time");
-	timeSeek.addEventListener("change", onMusicTime);
+	// timeSeek.addEventListener("change", onMusicTime);
 	navigation = document.getElementById("navigation");
 	masterSlider = document.getElementById("master");
 	masterSlider.addEventListener("change", onChangedMasterVolume);
@@ -241,7 +241,7 @@ function onUnloadf(event) {
 // 画面のサイズ変更
 function onResize(event) {
 	console.log("onResize");
-	dc.canvasResize();
+	dc.canvasResize(window.innerWidth,window.innerHeight/4);
 }
 
 // ファイルをドラッグ
@@ -266,15 +266,6 @@ function onSelectedFile(event) {
 function loadAudioFile(file) {
 	musicName.innerText = "Playing music is " + file.name + ".";
 	loadAudio(URL.createObjectURL(file));
-}
-
-// ボリュームボタンを押下
-function onClickVolumeButton() {
-	if (navigation.style.display === "none") {
-		navigation.style.display = "block";
-	} else {
-		navigation.style.display = "none";
-	}
 }
 
 // 再生ボタンを押下
@@ -316,7 +307,6 @@ window.drop =()=>{onDrop()};
 const GlobalStyle = createGlobalStyle`
 body {
   margin: 0;
-  overflow: hidden;
 }
 ::-webkit-scrollbar {
   width: 0;
@@ -325,10 +315,10 @@ body {
 `;
 
 const HrStyle = css`
-height: 0;
-    margin: 0;
-    padding: 0;
-    border: 0;
+	height: 0;
+	margin: 0;
+	padding: 0;
+	border: 0;
 `;
 
 const Screen = styled.div`
@@ -337,127 +327,98 @@ const Screen = styled.div`
   height: 100vh;
 `;
 
-const Background = styled.div`
-  position: absolute;
+const WaveCanvas = styled.div`
   width: 100%;
-  height: 100%;
-  background-color: rgba(16, 16, 16, 1.0);
+  height: 50%;
 `;
 
 const Canvas = styled.div`
   width: 100%;
+	height: 50%;
+	background: black;
+`;
+
+const DJtabel = styled.div`
+	position: relative;
+	width: 100%;
+	min-width: 400px;
+	padding-top: 20%;
+`;
+
+const Baf = styled.div`
+	display: flex;
+	justify-content: center;
+	position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
   height: 100%;
 `;
 
+const Publicbox = styled.div`
+	width: 50px;
+	height: 100%;
+`;
+
 const Foreground = styled.div`
-position: absolute;
-width: 100%;
-height: 100%;
-pointer-events: none;
-`;
-
-const Header = styled.div`
-  display: table;
-  position: relative;
-  width: calc(100vw - 30px);
-  padding: 0 15px 0 15px;
-  white-space: nowrap;
-  line-height: 0;
-  background-color: rgba(64, 64, 64, 0.5);
-  pointer-events: auto;
-`;
-
-const HeadDiv = styled.div`
-    display: table-cell;
-    height: 50px;
-    margin: 0 15px 0 15px;
-    text-align: center;
-    vertical-align: middle;
-`;
-
-const HeadInputButton = styled.input.attrs(props => ({
-	type:'button'
-}))`
-  width: 32px;
-  height: 32px;
-  margin: 0 20px 0 20px;
-  outline: none;
-`;
-
-const HeadInputRange = styled.input`
-width: 90%;
-height: 32px;
-margin: 0 15px 0 15px;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
 `;
 
 const Navigation = styled.div`
-position: absolute;
-    top: 50px;
-    bottom: 0;
-    background-color: rgba(64, 64, 64, 0.3);
-    overflow-x: scroll;
-    pointer-events: auto;
+	position: absolute;
+	top: 50px;
+	bottom: 0;
+	background-color: rgba(64, 64, 64, 0.3);
+	overflow-x: scroll;
+	pointer-events: auto;
 `;
 
 const NavigationPad = styled.div`
-padding: 15px 2px 15px 2px;
+	padding: 15px 2px;
 `;
 
 const Separator = styled.hr`
 ${HrStyle}
-margin-top: 5px;
-    margin-bottom: 5px;
-    border-top: 1px double rgb(92, 92, 92);
+	margin-top: 5px;
+	margin-bottom: 5px;
+	border-top: 1px double rgb(92, 92, 92);
 `;
 
 const RangeTitle = styled.td`
-padding: 2px 10px 2px 10px;
-    text-align: center;
-    font-size: small;
-    color: rgb(192, 192, 192);
-`;
-
-const RangeSlider = styled.td`
-padding: 2px 10px 2px 10px;
+	padding: 2px 10px;
+	text-align: center;
+	font-size: small;
 `;
 
 const SelectTitle = styled.td`
-padding: 2px 10px 2px 10px;
-    text-align: center;
-    font-size: small;
-    color: rgb(192, 192, 192);
+	padding: 2px 10px;
+	text-align: center;
+	font-size: small;
+	color: rgb(192, 192, 192);
 `;
 
 const SelectBox = styled.td`
-padding: 2px 10px 2px 10px;
-    text-align: center;
+	padding: 2px 10px;
+  text-align: center;
 `;
 
 const FileSelector = styled.td`
-padding: 10px 10px 10px 10px;
-    text-align: center;
+	padding: 10px;
+	text-align: center;
 `;
 
 const MusicName = styled.p`
-position: absolute;
-    right: 0;
-    bottom: 0;
-    padding: 10px 10px 10px 10px;
-    text-align: right;
-    color: rgb(192, 192, 192);
-    pointer-events: auto;
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	padding: 10px 10px 10px 10px;
+	text-align: right;
+	color: rgb(192, 192, 192);
+	pointer-events: auto;
 `;
-
-const MusicUrl = styled.a`
-  &:link,
-  &:visited,
-  &:hover,
-  &:active{
-    color: rgb(192, 192, 192);
-  }
-`;
-
-
 
 class Main extends React.Component {
   render() {
@@ -465,107 +426,24 @@ class Main extends React.Component {
       <>
       <GlobalStyle />
       <Screen>
-        <Background>
+        <WaveCanvas>
           <Canvas id="mainCanvas"></Canvas>
-        </Background>
+					<Canvas id="mainCanvas"></Canvas>
+        </WaveCanvas>
+				<DJtabel>
+					<Baf>
+						<Tablebox />
+						<Publicbox>&nbsp;</Publicbox>
+						<Tablebox />
+					</Baf>
+				</DJtabel>
 
         <Foreground>
-					<Header>
-						<HeadDiv style={{width: 1}}>
-							<HeadInputButton id="volume" value="volume" />
-						</HeadDiv>
-						<HeadDiv style={{width: 1}}>
-								<HeadInputButton id="play" value="start" />
-						</HeadDiv>
-						<HeadDiv>
-								<HeadInputRange id="time" type="range" min="0" max="1000" defaultValue="0" />
-						</HeadDiv>
-					</Header>
 
 					<Navigation id="navigation">
 						<NavigationPad>
 								<table>
 									<tbody className="equalizer">
-									<tr>
-										<td className="rangeTitle">MASTER</td>
-										<td className="rangeSlider">
-											<input id="master" min="0" max="100" type="range" defaultValue="25" title="" />
-										</td>
-									</tr>
-
-									<tr>
-										<td colSpan={2}>
-											<Separator />
-										</td>
-									</tr>
-
-									<tr>
-										<RangeTitle>30</RangeTitle>
-										<RangeSlider>
-											<input id="frequency0" type="range" min="0" max="200" defaultValue="100" title="" />
-										</RangeSlider>
-									</tr>
-									<tr>
-										<RangeTitle>60</RangeTitle>
-										<RangeSlider>
-											<input id="frequency1" type="range" min="0" max="200" defaultValue="100" title="" />
-										</RangeSlider>
-									</tr>
-									<tr>
-										<RangeTitle>120</RangeTitle>
-										<RangeSlider>
-											<input id="frequency2" type="range" min="0" max="200" defaultValue="100" title="" />
-										</RangeSlider>
-									</tr>
-									<tr>
-										<RangeTitle>240</RangeTitle>
-										<RangeSlider>
-											<input id="frequency3" type="range" min="0" max="200" defaultValue="100" title="" />
-										</RangeSlider>
-									</tr>
-									<tr>
-										<RangeTitle>500</RangeTitle>
-										<RangeSlider>
-											<input id="frequency4" type="range" min="0" max="200" defaultValue="100" title="" />
-										</RangeSlider>
-									</tr>
-									<tr>
-										<RangeTitle>1k</RangeTitle>
-										<RangeSlider>
-											<input id="frequency5" type="range" min="0" max="200" defaultValue="100" title="" />
-										</RangeSlider>
-									</tr>
-									<tr>
-										<RangeTitle>2k</RangeTitle>
-										<RangeSlider>
-											<input id="frequency6" type="range" min="0" max="200" defaultValue="100" title="" />
-										</RangeSlider>
-									</tr>
-									<tr>
-										<RangeTitle>4k</RangeTitle>
-										<RangeSlider>
-											<input id="frequency7" type="range" min="0" max="200" defaultValue="100" title="" />
-										</RangeSlider>
-									</tr>
-									<tr>
-										<RangeTitle>8k</RangeTitle>
-										<RangeSlider>
-											<input id="frequency8" type="range" min="0" max="200" defaultValue="100" title="" />
-										</RangeSlider>
-									</tr>
-									<tr>
-										<RangeTitle>16k</RangeTitle>
-										<RangeSlider>
-											<input id="frequency9" type="range" min="0" max="200" defaultValue="100" title="" />
-										</RangeSlider>
-									</tr>
-
-									<tr>
-										<td colSpan={2}>
-											<Separator />
-										</td>
-									</tr>
-
 									<tr>
 										<SelectTitle>PRESET</SelectTitle>
 										<SelectBox>
@@ -585,12 +463,6 @@ class Main extends React.Component {
 									</tr>
 
 									<tr>
-										<td colSpan={2}>
-												<Separator />
-										</td>
-									</tr>
-
-									<tr>
 										<FileSelector colSpan={2}>
 											<input id="fileSelector" type="file" />
 										</FileSelector>
@@ -600,11 +472,7 @@ class Main extends React.Component {
 						</NavigationPad>
 					</Navigation>
 
-					<MusicName id="musicName">
-						<MusicUrl href="http://musmus.main.jp/">デフォルトBGM : MusMus</MusicUrl>
-						<br />
-						ドラッグ＆ドロップで任意の曲を再生可能
-					</MusicName>
+					<MusicName id="musicName">MusMus</MusicName>
         </Foreground>
       </Screen>
       </>

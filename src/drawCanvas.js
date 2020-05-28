@@ -3,14 +3,14 @@ import * as PIXI from 'pixi.js';
 
 export default class DrawCanvas {
 
-  constructor(canvas){
+  constructor(canvas,w,h){
     this.canvas = canvas;
     this.g = [];
     this.g[0] = [];
     this.g[1] = [];
 
-    this.width = 0;
-    this.height = 0;
+    this.width = w;
+    this.height =h;
     this.memWaveLength = 0;
 
     this.stage = new PIXI.Container();
@@ -35,10 +35,8 @@ export default class DrawCanvas {
   }
 
   drawWaveform(wave) {
-    var width = window.innerWidth;
-    var height = window.innerHeight;
-    this.width = width;
-    this.height = height;
+    var width = this.width;
+    var height =this.height;
     this.renderer.resize(width, height);
     var halfW = width/2;
     var halfH = height/2;
@@ -77,9 +75,9 @@ export default class DrawCanvas {
     this.loop();
   }
 
-  canvasResize(){
-    var width = window.innerWidth;
-    var height = window.innerHeight;
+  canvasResize(w,h){
+    var width = w;
+    var height = h;
     this.renderer.resize(width, height);
     var c_width = (width-this.width)/this.g[0].length;
     var c_height = (height-this.height)/2;
