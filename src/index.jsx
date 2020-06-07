@@ -35,7 +35,6 @@ function loadAudio(url) {
 ////////////////////////////////////////////////////////////////
 // UI関連
 
-let fileSelector;
 let playButton;
 let timeSeek;
 let masterSlider;
@@ -55,21 +54,17 @@ function onLoadf(event) {
 	console.log("onLoad");
 
 	// UIの初期化
-	fileSelector = document.getElementById("fileSelector");
-	fileSelector.addEventListener("change", onSelectedFile);
 	playButton = document.getElementById("play");
 	playButton.addEventListener("click", onClickPlayButton);
 	timeSeek = document.getElementById("time");
 	// timeSeek.addEventListener("change", onMusicTime);
 	masterSlider = document.getElementById("master");
-	masterSlider.addEventListener("change", onChangedMasterVolume);
 	frequencySliders = new Array(NUM_FREQUENCY_BUNDLES);
 	for (let i = 0; i < frequencySliders.length; ++i) {
 		frequencySliders[i] = document.getElementById("frequency" + i);
 		frequencySliders[i].addEventListener("change", onChangedFrequencyVolume);
 	}
 	frequencyPreset = document.getElementById("preset");
-	frequencyPreset.addEventListener("change", onChangedPreset);
 	musicName = document.getElementById("musicName");
 
 	music = new Music(NUM_FREQUENCY_BUNDLES,frequencySliders,timeSeek,masterSlider);
@@ -87,11 +82,6 @@ function onUnloadf(event) {
 function onResize(event) {
 	console.log("onResize");
 	dc.canvasResize(window.innerWidth,window.innerHeight/4);
-}
-
-// ファイルを選択
-function onSelectedFile(event) {
-	loadAudioFile(event.target.files[0]);
 }
 
 // 音声ファイルの読み込み
@@ -113,20 +103,9 @@ function onClickPlayButton(event) {
 	}
 }
 
-// マスターボリュームを変更
-function onChangedMasterVolume(event) {}
-
 // 各周波数もリュームを変更
 function onChangedFrequencyVolume(event) {
 	frequencyPreset.value = -1;
-}
-
-// プリセットを変更
-function onChangedPreset(event) {
-	let preset = FREQUENCIES_PRESETS[event.target.value];
-	for (let i = 0; i < frequencySliders.length; ++i) {
-		frequencySliders[i].value = preset[i];
-	}
 }
 
 // イベント登録
@@ -231,6 +210,18 @@ const MusicName = styled.p`
 `;
 
 class Main extends React.Component {
+		// ファイルを選択
+		onSelectedFile(event) {
+			loadAudioFile(event.target.files[0]);
+		}
+		// プリセットを変更
+		onChangedPreset(event) {
+			let preset = FREQUENCIES_PRESETS[event.target.value];
+			for (let i = 0; i < frequencySliders.length; ++i) {
+				frequencySliders[i].value = preset[i];
+			}
+		}
+
   render() {
     return (
       <>
@@ -257,7 +248,7 @@ class Main extends React.Component {
 									<tr>
 										<SelectTitle>PRESET</SelectTitle>
 										<SelectBox>
-											<select id="preset" title="">
+											<select id="preset" title="" onChange={(e)=>this.onChangedPreset(e)}>
 												<option value="0">デフォルト</option>
 												<option value="1">ロック</option>
 												<option value="2">ポップ</option>
@@ -273,7 +264,7 @@ class Main extends React.Component {
 									</tr>
 
 									<tr>
-										<FileSelector colSpan={2}>
+										<FileSelector colSpan={2} onChange={(e)=>this.onSelectedFile(e)}>
 											<input id="fileSelector" type="file" />
 										</FileSelector>
 									</tr>
