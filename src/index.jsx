@@ -1,11 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import styled, { createGlobalStyle } from 'styled-components';
-import DFT from "./dft"
 import DrawCanvas from "./drawCanvas";
 import Tablebox from "./tableBox";
+import Music from "./music";
 
-// メインの処理
 // 定数
 const NUM_FREQUENCY_BUNDLES = 10;
 const FREQUENCIES_PRESETS = [
@@ -20,170 +19,17 @@ const FREQUENCIES_PRESETS = [
 	[1, 1, 1, 150, 150, 150, 1, 1, 1, 1], // 中音
 	[1, 1, 1, 1, 1, 1, 150, 150, 150, 150], // 高音
 ];
-const NUM_SAMPLES = 1 << NUM_FREQUENCY_BUNDLES; // 2^10 = 1024
 
-////////////////////////////////////////////////////////////////
-// サウンド関連
-
-let audioContext;
-let audioElement;
-let audioSource;
-let scriptProcessor;
-
-let audioPrevInputs;
-let audioPrevOutputs;
-let audioWorkBuffer;
-
-let audioUrl = "music/tw067.mp3";
-
-// イニシャライズされているか否か
-function isInitializedAudio() {
-	return audioContext != null;
-}
-
-// オーディオ関連の初期化
-function initializeAudio() {
-	// 処理用のバッファを初期化
-	audioPrevInputs = [
-		new Float32Array(NUM_SAMPLES),
-		new Float32Array(NUM_SAMPLES)
-	];
-	audioPrevOutputs = [
-		new Float32Array(NUM_SAMPLES),
-		new Float32Array(NUM_SAMPLES)
-	];
-	audioWorkBuffer = new Float32Array(NUM_SAMPLES * 4); // FFT処理用のバッファ、処理サンプルの倍の複素数を収納できるようにする
-
-	// WebAudio系の初期化
-	audioContext = window.AudioContext != null ?
-		new window.AudioContext() :
-		new window.webkitAudioContext();
-
-	scriptProcessor = audioContext.createScriptProcessor(NUM_SAMPLES, 2, 2);
-	scriptProcessor.addEventListener("audioprocess", onAudioProcess);
-	scriptProcessor.connect(audioContext.destination);
-
-	audioElement = new Audio();
-	audioElement.loop = true;
-	audioElement.autoplay = true;
-	audioElement.addEventListener("timeupdate", onUpdatedAudioTime);
-
-	audioSource = audioContext.createMediaElementSource(audioElement);
-	audioSource.connect(scriptProcessor);
-}
-
-// オーディオ関連の後処理
-function terminateAudio() {
-	audioElement.stop();
-}
-
+let music = "";
+let audioUrl = "";
 // 音声ファイルを読み込む
 function loadAudio(url) {
-	if (isInitializedAudio()) {
-        audioElement.src = url;
+	if (music.isInitializedAudio()) {
+		music.audioElement.src = url; //set
 	} else {
-        audioUrl = url;
-    }
-    dc.drawCanvas(url);
-}
-
-// 音声ファイルの再生時間が更新
-function onUpdatedAudioTime(event) {
-	timeSeek.value = 1000 * (audioElement.currentTime / audioElement.duration);
-}
-
-// function onMusicTime() {
-// 	if(audioElement != null){
-// 		audioElement.currentTime = timeSeek.value * audioElement.duration / 1000;
-// 	}
-// }
-
-// 音声ファイルが再生中か否か
-function isPlayAudio() {
-	return !audioElement.paused
-}
-
-// 音声ファイルを再生する
-function playAudio() {
-	if (!isPlayAudio()) {
-		audioElement.play();
+		audioUrl = url;
 	}
-}
-
-// 音声ファイルを停止する
-function stopAudio() {
-	audioElement.pause();
-}
-
-// 音声の波形を処理
-function onAudioProcess(event) {
-	let input = event.inputBuffer;
-	let output = event.outputBuffer;
-	for (let i = 0; i < output.numberOfChannels; ++i) {
-		let inputData = input.getChannelData(i);
-		let outputData = output.getChannelData(i);
-		let prevInput = audioPrevInputs[i];
-		let prevOutput = audioPrevOutputs[i];
-
-		// 前半に前回の入力波形、後半に今回の入力波形を実数を複素数に変換して作業用バッファに詰める
-		for (let j = 0; j < NUM_SAMPLES; ++j) {
-			// 前半
-			let prevIndex = j * 2;
-			audioWorkBuffer[prevIndex] = prevInput[j];
-			audioWorkBuffer[prevIndex + 1] = 0.0;
-
-			// 後半
-			let nextIndex = (NUM_SAMPLES + j) * 2;
-			audioWorkBuffer[nextIndex] = inputData[j];
-			audioWorkBuffer[nextIndex + 1] = 0.0;
-
-			// 今回の波形を保存
-			prevInput[j] = inputData[j];
-		}
-
-		// FFTをかけて周波数
-		DFT.fftHighSpeed(NUM_SAMPLES * 2, audioWorkBuffer);
-
-		// 各周波数のボリュームを設定
-		for (let j = 0; j < frequencySliders.length; ++j) {
-			let volume = frequencySliders[j].value / 100.0;
-
-			for (let k = 1 << j, kEnd = 1 << (j + 1); k < kEnd; ++k) {
-				let positiveFq = k * 2;
-				audioWorkBuffer[positiveFq] *= volume;
-				audioWorkBuffer[positiveFq + 1] *= volume;
-
-				let negativeFq = (NUM_SAMPLES * 2 - k) * 2;
-				audioWorkBuffer[negativeFq] *= volume;
-				audioWorkBuffer[negativeFq + 1] *= volume;
-			}
-		}
-
-		// 直流部分のボリュームを設定
-		let minFqVolume = frequencySliders[0].value / 100.0;
-		audioWorkBuffer[0] *= minFqVolume;
-		audioWorkBuffer[1] *= minFqVolume;
-
-		// 最高周波数のボリュームを設定
-		let maxFqVolume = frequencySliders[frequencySliders.length - 1].value / 100.0;
-		audioWorkBuffer[NUM_SAMPLES * 2] *= maxFqVolume;
-		audioWorkBuffer[NUM_SAMPLES * 2 + 1] *= maxFqVolume;
-
-		// ビジュアライザの更新
-		// updateFrequencyVisualizerParam(i, audioWorkBuffer);
-
-		// 逆FFTをかける
-		DFT.fftHighSpeed(NUM_SAMPLES * 2, audioWorkBuffer, true);
-
-		// 前回の出力波形の後半と今回の出力波形の前半をクロスフェードさせて出力する
-		let master = masterSlider.value / 100.0;
-		for (let j = 0; j < NUM_SAMPLES; ++j) {
-			let prev = prevOutput[j] * (NUM_SAMPLES - j) / NUM_SAMPLES;
-			let next = audioWorkBuffer[j * 2] * j / NUM_SAMPLES;
-			outputData[j] = (prev + next) * master;
-			prevOutput[j] = audioWorkBuffer[(NUM_SAMPLES + j) * 2];
-		}
-	}
+	dc.drawCanvas(url);
 }
 
 ////////////////////////////////////////////////////////////////
@@ -226,6 +72,7 @@ function onLoadf(event) {
 	frequencyPreset.addEventListener("change", onChangedPreset);
 	musicName = document.getElementById("musicName");
 
+	music = new Music(NUM_FREQUENCY_BUNDLES,frequencySliders,timeSeek,masterSlider);
 	// その他の初期化
 	onResize();
 }
@@ -233,7 +80,7 @@ function onLoadf(event) {
 // 後処理
 function onUnloadf(event) {
 	console.log("onUnload");
-	terminateAudio();
+	music.terminateAudio();
 }
 
 // 画面のサイズ変更
@@ -255,14 +102,14 @@ function loadAudioFile(file) {
 
 // 再生ボタンを押下
 function onClickPlayButton(event) {
-	if (!isInitializedAudio()) {
-		initializeAudio();
+	if (!music.isInitializedAudio()) {
+		music.initializeAudio();
 		loadAudio(audioUrl);
 	}
-	if (!isPlayAudio()) {
-		playAudio();
+	if (!music.isPlayAudio()) {
+		music.playAudio();
 	} else {
-		stopAudio();
+		music.stopAudio();
 	}
 }
 

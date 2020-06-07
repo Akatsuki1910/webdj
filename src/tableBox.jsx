@@ -60,9 +60,6 @@ const MusicControl = styled.div`
 
 
 export default class TableBox extends React.Component {
-  oc(){
-    alert('clicked');
-  }
   render(){
     return(
       <BoxWrap>
@@ -80,7 +77,6 @@ export default class TableBox extends React.Component {
               return items;
             })()}
           </MusicEffect>
-          <input type="button" value="abc" onClick={() => this.oc() }/>
           <MusicControl>
             <HeadInputButton id="play" value="start" />
             <TimeRange id="time" min="0" max="1000" defaultValue="0" />
