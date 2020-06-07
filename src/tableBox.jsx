@@ -1,5 +1,5 @@
 import React from 'react';
-import styled, { css,createGlobalStyle,extend } from 'styled-components';
+import styled from 'styled-components';
 
 const BoxWrap = styled.div`
   width: 50%;
@@ -60,6 +60,9 @@ const MusicControl = styled.div`
 
 
 export default class TableBox extends React.Component {
+  oc(){
+    alert('clicked');
+  }
   render(){
     return(
       <BoxWrap>
@@ -71,12 +74,13 @@ export default class TableBox extends React.Component {
               for (let i=0;i<10;i++) {
                 const p = "frequency"+i;
                 items.push(
-                  <RangeSlider id={p} type="range" min="0" max="200" defaultValue="100" title="" />
+                  <RangeSlider key={i} id={p} type="range" min="0" max="200" defaultValue="100" title="" />
                 );
               }
               return items;
             })()}
           </MusicEffect>
+          <input type="button" value="abc" onClick={() => this.oc() }/>
           <MusicControl>
             <HeadInputButton id="play" value="start" />
             <TimeRange id="time" min="0" max="1000" defaultValue="0" />

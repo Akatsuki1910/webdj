@@ -38,7 +38,7 @@ export default class DrawCanvas {
     var width = this.width;
     var height =this.height;
     this.renderer.resize(width, height);
-    var halfW = width/2;
+    // var halfW = width/2;
     var halfH = height/2;
     this.canvas.appendChild(this.renderer.view);
     const barMargin = 0;

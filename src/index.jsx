@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import styled, { css,createGlobalStyle } from 'styled-components';
+import styled, { createGlobalStyle } from 'styled-components';
 import DFT from "./dft"
 import DrawCanvas from "./drawCanvas";
 import Tablebox from "./tableBox";
@@ -92,11 +92,11 @@ function onUpdatedAudioTime(event) {
 	timeSeek.value = 1000 * (audioElement.currentTime / audioElement.duration);
 }
 
-function onMusicTime() {
-	if(audioElement != null){
-		audioElement.currentTime = timeSeek.value * audioElement.duration / 1000;
-	}
-}
+// function onMusicTime() {
+// 	if(audioElement != null){
+// 		audioElement.currentTime = timeSeek.value * audioElement.duration / 1000;
+// 	}
+// }
 
 // 音声ファイルが再生中か否か
 function isPlayAudio() {
@@ -192,7 +192,6 @@ function onAudioProcess(event) {
 let fileSelector;
 let playButton;
 let timeSeek;
-let navigation;
 let masterSlider;
 let frequencySliders;
 let frequencyPreset;
@@ -216,7 +215,6 @@ function onLoadf(event) {
 	playButton.addEventListener("click", onClickPlayButton);
 	timeSeek = document.getElementById("time");
 	// timeSeek.addEventListener("change", onMusicTime);
-	navigation = document.getElementById("navigation");
 	masterSlider = document.getElementById("master");
 	masterSlider.addEventListener("change", onChangedMasterVolume);
 	frequencySliders = new Array(NUM_FREQUENCY_BUNDLES);
@@ -242,19 +240,6 @@ function onUnloadf(event) {
 function onResize(event) {
 	console.log("onResize");
 	dc.canvasResize(window.innerWidth,window.innerHeight/4);
-}
-
-// ファイルをドラッグ
-function onDragOver(event) {
-	event.stopPropagation();
-	event.preventDefault();
-}
-
-// ファイルをドロップ
-function onDrop(event) {
-	event.stopPropagation();
-	event.preventDefault();
-	loadAudioFile(event.dataTransfer.files[0]);
 }
 
 // ファイルを選択
@@ -301,8 +286,6 @@ function onChangedPreset(event) {
 window.onload =(e)=>{onLoadf(e)};
 window.onunload =(e)=>{onUnloadf(e)};
 window.onresize =(e)=>{onResize(e)};
-window.dragover =()=>{onDragOver()};
-window.drop =()=>{onDrop()};
 
 const GlobalStyle = createGlobalStyle`
 body {
@@ -312,13 +295,6 @@ body {
   width: 0;
   height: 0;
 }
-`;
-
-const HrStyle = css`
-	height: 0;
-	margin: 0;
-	padding: 0;
-	border: 0;
 `;
 
 const Screen = styled.div`
@@ -380,19 +356,6 @@ const NavigationPad = styled.div`
 	padding: 15px 2px;
 `;
 
-const Separator = styled.hr`
-${HrStyle}
-	margin-top: 5px;
-	margin-bottom: 5px;
-	border-top: 1px double rgb(92, 92, 92);
-`;
-
-const RangeTitle = styled.td`
-	padding: 2px 10px;
-	text-align: center;
-	font-size: small;
-`;
-
 const SelectTitle = styled.td`
 	padding: 2px 10px;
 	text-align: center;
@@ -432,9 +395,9 @@ class Main extends React.Component {
         </WaveCanvas>
 				<DJtabel>
 					<Baf>
-						<Tablebox />
+						<Tablebox key="left"/>
 						<Publicbox>&nbsp;</Publicbox>
-						<Tablebox />
+						<Tablebox key="right"/>
 					</Baf>
 				</DJtabel>
 
