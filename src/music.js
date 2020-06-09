@@ -62,7 +62,7 @@ export default class Music {
 
 	// 音声ファイルの再生時間が更新
 	onUpdatedAudioTime(event) {
-		this.ts.value = 1000 * (this.audioElement.currentTime / this.audioElement.duration);
+		this.ts.current.value = 1000 * (this.audioElement.currentTime / this.audioElement.duration);
 	}
 
 	// onMusicTime() {
@@ -119,7 +119,7 @@ export default class Music {
 
 			// 各周波数のボリュームを設定
 			for (let j = 0; j < this.fs.length; ++j) {
-				let volume = this.fs[j].value / 100.0;
+				let volume = this.fs[j].current.value / 100.0;
 
 				for (let k = 1 << j, kEnd = 1 << (j + 1); k < kEnd; ++k) {
 					let positiveFq = k * 2;
@@ -133,12 +133,12 @@ export default class Music {
 			}
 
 			// 直流部分のボリュームを設定
-			let minFqVolume = this.fs[0].value / 100.0;
+			let minFqVolume = this.fs[0].current.value / 100.0;
 			this.audioWorkBuffer[0] *= minFqVolume;
 			this.audioWorkBuffer[1] *= minFqVolume;
 
 			// 最高周波数のボリュームを設定
-			let maxFqVolume = this.fs[this.fs.length - 1].value / 100.0;
+			let maxFqVolume = this.fs[this.fs.length - 1].current.value / 100.0;
 			this.audioWorkBuffer[this.NUM_SAMPLES * 2] *= maxFqVolume;
 			this.audioWorkBuffer[this.NUM_SAMPLES * 2 + 1] *= maxFqVolume;
 
@@ -149,7 +149,7 @@ export default class Music {
 			DFT.fftHighSpeed(this.NUM_SAMPLES * 2, this.audioWorkBuffer, true);
 
 			// 前回の出力波形の後半と今回の出力波形の前半をクロスフェードさせて出力する
-			let master = this.ms.value / 100.0;
+			let master = this.ms.current.value / 100.0;
 			for (let j = 0; j < this.NUM_SAMPLES; ++j) {
 				let prev = prevOutput[j] * (this.NUM_SAMPLES - j) / this.NUM_SAMPLES;
 				let next = this.audioWorkBuffer[j * 2] * j / this.NUM_SAMPLES;
