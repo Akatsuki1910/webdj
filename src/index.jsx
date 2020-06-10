@@ -104,8 +104,8 @@ class Main extends React.Component {
       <GlobalStyle />
       <Screen>
         <WaveCanvas>
-          <Canvas id="mainCanvas" ref={elem => this.canvas[0] = elem}></Canvas>
-					<Canvas id="mainCanvas" ref={elem => this.canvas[1] = elem}></Canvas>
+          <Canvas ref={elem => this.canvas[0] = elem}></Canvas>
+					<Canvas ref={elem => this.canvas[1] = elem}></Canvas>
         </WaveCanvas>
 				<DJtabel>
 					<Baf>

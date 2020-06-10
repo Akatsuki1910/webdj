@@ -190,59 +190,57 @@ export default class TableBox extends React.Component {
     const mN = this.state.musicName;
     return(
       <BoxWrap>
-        <VolumeRange id="master" min="0" max="100" defaultValue="25" ref={this.masterSlider}/>
+        <VolumeRange min="0" max="100" defaultValue="25" ref={this.masterSlider}/>
         <RightBox>
           <MusicEffect>
             {(()=>{
               const items = [];
               for (let i=0;i<this.state.NUM_FREQUENCY_BUNDLES;i++) {
-                const p = "frequency"+i;
                 items.push(
-                  <RangeSlider key={i} id={p} ref={this.frequencySliders[i]} type="range" min="0" max="200" defaultValue="100" title="" onChange={(e)=>this.onChangedFrequencyVolume(e)} />
+                  <RangeSlider key={i} ref={this.frequencySliders[i]} type="range" min="0" max="200" defaultValue="100" title="" onChange={(e)=>this.onChangedFrequencyVolume(e)} />
                 );
               }
               return items;
             })()}
           </MusicEffect>
           <MusicControl>
-            <HeadInputButton id="play" value="start" onClick={(e)=>this.onClickPlayButton(e)} />
-            <TimeRange id="time" min="0" max="1000" defaultValue="0" ref={this.timeSeek}/>
+            <HeadInputButton value="start" onClick={(e)=>this.onClickPlayButton(e)} />
+            <TimeRange min="0" max="1000" defaultValue="0" ref={this.timeSeek}/>
           </MusicControl>
           <Foreground>
 
-					<Navigation id="navigation">
+					<Navigation>
 						<NavigationPad>
-								<table>
-									<tbody className="equalizer">
-									<tr>
-										<SelectTitle>PRESET</SelectTitle>
-										<SelectBox>
-											<select id="preset" ref={this.frequencyPreset} title="" onChange={(e)=>this.onChangedPreset(e)}>
-                        {(()=>{
-                          const option = ["デフォルト","ロック","ポップ","ダンス","ジャズ","古いラジオ","水中","低音","中音","高音"];
-                          const items = [];
-                          for (let i=0;i<option.length;i++) {
-                            items.push(
-                              <option key={i} value={i}>{option[i]}</option>
-                            );
-                          }
-                          return items;
-                        })()}
-											</select>
-										</SelectBox>
-									</tr>
+              <table>
+                <tbody>
+                <tr>
+                  <SelectTitle>PRESET</SelectTitle>
+                  <SelectBox>
+                    <select ref={this.frequencyPreset} onChange={(e)=>this.onChangedPreset(e)}>
+                      {(()=>{
+                        const option = ["デフォルト","ロック","ポップ","ダンス","ジャズ","古いラジオ","水中","低音","中音","高音"];
+                        const items = [];
+                        for (let i=0;i<option.length;i++) {
+                          items.push(
+                            <option key={i} value={i}>{option[i]}</option>
+                          );
+                        }
+                        return items;
+                      })()}
+                    </select>
+                  </SelectBox>
+                </tr>
 
-									<tr>
-										<FileSelector colSpan={2} onChange={(e)=>this.onSelectedFile(e)}>
-											<input id="fileSelector" type="file" accept="audio/*"/>
-										</FileSelector>
-									</tr>
-									</tbody>
-								</table>
+                <tr>
+                  <FileSelector colSpan={2} onChange={(e)=>this.onSelectedFile(e)}>
+                    <input type="file" accept="audio/*"/>
+                  </FileSelector>
+                </tr>
+                </tbody>
+              </table>
 						</NavigationPad>
-            <MusicName id="musicName">{mN}</MusicName>
+            <MusicName>{mN}</MusicName>
 					</Navigation>
-
         </Foreground>
         </RightBox>
       </BoxWrap>
