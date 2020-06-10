@@ -127,11 +127,14 @@ export default class TableBox extends React.Component {
       audioUrl: this.props.audioUrl,
       NUM_FREQUENCY_BUNDLES: 10,
     };
+    this.dc = props.canvas;
     this.timeSeek = React.createRef();
     this.masterSlider = React.createRef();
     this.frequencyPreset = React.createRef();
     this.frequencySliders = [];
-    for(var i=0;i<this.state.NUM_FREQUENCY_BUNDLES;i++){this.frequencySliders[i] = React.createRef();}
+    for(var i=0;i<this.state.NUM_FREQUENCY_BUNDLES;i++){
+      this.frequencySliders[i] = React.createRef();
+    }
 
     this.music = new Music(this.state.NUM_FREQUENCY_BUNDLES,this.frequencySliders,this.timeSeek,this.masterSlider);
 
@@ -144,7 +147,7 @@ export default class TableBox extends React.Component {
     } else {
       this.setState({audioUrl: url});
     }
-    // dc.drawCanvas(url);
+    this.props.canvas().drawCanvas(url);
   }
 
   // 音声ファイルの読み込み
@@ -220,7 +223,7 @@ export default class TableBox extends React.Component {
                           const items = [];
                           for (let i=0;i<option.length;i++) {
                             items.push(
-                              <option value={i}>{option[i]}</option>
+                              <option key={i} value={i}>{option[i]}</option>
                             );
                           }
                           return items;
@@ -231,7 +234,7 @@ export default class TableBox extends React.Component {
 
 									<tr>
 										<FileSelector colSpan={2} onChange={(e)=>this.onSelectedFile(e)}>
-											<input id="fileSelector" type="file" />
+											<input id="fileSelector" type="file" accept="audio/*"/>
 										</FileSelector>
 									</tr>
 									</tbody>

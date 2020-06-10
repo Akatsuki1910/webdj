@@ -4,41 +4,6 @@ import styled, { createGlobalStyle } from 'styled-components';
 import DrawCanvas from "./drawCanvas";
 import Tablebox from "./tableBox";
 
-let music = "";
-let audioUrl = "";
-
-let canvas;
-let dc;
-
-// 初期化
-function onLoadf(event) {
-	//表示
-	canvas = document.getElementById('mainCanvas');
-	dc = new DrawCanvas(canvas,window.innerWidth,window.innerHeight/4);
-	dc.drawCanvas(audioUrl);
-	console.log("onLoad");
-
-	// その他の初期化
-	onResize();
-}
-
-// 後処理
-function onUnloadf(event) {
-	console.log("onUnload");
-	music.terminateAudio();
-}
-
-// 画面のサイズ変更
-function onResize(event) {
-	console.log("onResize");
-	dc.canvasResize(window.innerWidth,window.innerHeight/4);
-}
-
-// イベント登録
-window.onload =(e)=>{onLoadf(e)};
-window.onunload =(e)=>{onUnloadf(e)};
-window.onresize =(e)=>{onResize(e)};
-
 const GlobalStyle = createGlobalStyle`
 body {
   margin: 0;
@@ -89,9 +54,48 @@ const Publicbox = styled.div`
 `;
 
 class Main extends React.Component {
+	constructor(){
+		super();
+		this.music = "";
+		this.audioUrl = "";
+		this.canvas = "";
+		this.dc = [];
+		this.canvas = [];
+	}
 
-	testlog(){
-		console.log("a");
+	componentDidMount() {
+		// イベント登録
+		window.onload =(e)=>{this.onLoadf(e)};
+		window.onunload =(e)=>{this.onUnloadf(e)};
+		window.onresize =(e)=>{this.onResize(e)};
+
+		this.dc[0] = new DrawCanvas(this.canvas[0],window.innerWidth,window.innerHeight/4);
+		this.dc[1] = new DrawCanvas(this.canvas[1],window.innerWidth,window.innerHeight/4);
+	}
+
+	// 初期化
+	onLoadf(event) {
+		//表示
+		console.log(this.canvas);
+		// その他の初期化
+		this.onResize();
+	}
+
+	// 後処理
+	onUnloadf(event) {
+		console.log("onUnload");
+		this.music.terminateAudio();
+	}
+
+	// 画面のサイズ変更
+	onResize(event) {
+		console.log("onResize");
+		this.dc[0].canvasResize(window.innerWidth,window.innerHeight/4);
+		this.dc[1].canvasResize(window.innerWidth,window.innerHeight/4);
+	}
+
+	returnCanvas(i){
+		return this.dc[i];
 	}
 
   render() {
@@ -100,14 +104,14 @@ class Main extends React.Component {
       <GlobalStyle />
       <Screen>
         <WaveCanvas>
-          <Canvas id="mainCanvas"></Canvas>
-					<Canvas id="mainCanvas"></Canvas>
+          <Canvas id="mainCanvas" ref={elem => this.canvas[0] = elem}></Canvas>
+					<Canvas id="mainCanvas" ref={elem => this.canvas[1] = elem}></Canvas>
         </WaveCanvas>
 				<DJtabel>
 					<Baf>
-						<Tablebox key="left" value="1"/>
+						<Tablebox key="left" value="1" canvas={()=>this.returnCanvas(0)}/>
 						<Publicbox>&nbsp;</Publicbox>
-						<Tablebox key="right" value="2"/>
+						<Tablebox key="right" value="2" canvas={()=>this.returnCanvas(1)}/>
 					</Baf>
 				</DJtabel>
       </Screen>
