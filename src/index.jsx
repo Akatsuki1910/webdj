@@ -109,9 +109,9 @@ class Main extends React.Component {
         </WaveCanvas>
 				<DJtabel>
 					<Baf>
-						<Tablebox key="left" value="1" canvas={()=>this.returnCanvas(0)}/>
+						<Tablebox key="0" canvas={()=>this.returnCanvas(0)}/>
 						<Publicbox>&nbsp;</Publicbox>
-						<Tablebox key="right" value="2" canvas={()=>this.returnCanvas(1)}/>
+						<Tablebox key="1" canvas={()=>this.returnCanvas(1)}/>
 					</Baf>
 				</DJtabel>
       </Screen>
