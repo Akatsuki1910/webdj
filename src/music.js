@@ -65,6 +65,13 @@ export default class Music {
 		this.ts.current.value = 1000 * (this.audioElement.currentTime / this.audioElement.duration);
 	}
 
+	//音楽をセット
+	setAudio(audio){
+		this.audioElement.src = audio;
+		this.stopAudio();
+		this.ts.current.value = 0;
+	}
+
 	// onMusicTime() {
 	// 	if(this.audioElement != null){
 	// 		this.audioElement.currentTime = this.ts.value * this.audioElement.duration / 1000;

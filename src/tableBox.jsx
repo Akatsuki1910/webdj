@@ -60,13 +60,6 @@ const MusicControl = styled.div`
   background-color:#333;
 `;
 
-const Foreground = styled.div`
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	pointer-events: none;
-`;
-
 const Navigation = styled.div`
   position: relative;
   width: 100%;
@@ -78,13 +71,6 @@ const Navigation = styled.div`
 
 const NavigationPad = styled.div`
 	padding: 15px 2px;
-`;
-
-const SelectTitle = styled.td`
-	padding: 2px 10px;
-	text-align: center;
-	font-size: small;
-	color: rgb(192, 192, 192);
 `;
 
 const SelectBox = styled.div`
@@ -141,12 +127,9 @@ export default class TableBox extends React.Component {
   // 音声ファイルを読み込む
   loadAudio(url) {
     if (this.music.isInitializedAudio()) {
-      this.music.audioElement.src = url; //set
-      this.music.stopAudio();
-      console.log(1);
+      this.music.setAudio(url); //set
     } else {
       this.setState({audioUrl: url});
-      console.log(2);
     }
   }
 
