@@ -71,8 +71,9 @@ export default class DrawCanvas {
     }
 
     this.memWaveLength = wave[0].length;
-    cancelAnimationFrame(this.loop);
-    this.loop();
+    this.renderer.render(this.stage);
+    // cancelAnimationFrame(this.loop);
+    // this.loop();
   }
 
   canvasResize(w,h){

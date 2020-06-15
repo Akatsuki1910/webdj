@@ -3,9 +3,8 @@ import styled from 'styled-components';
 import Music from "./music";
 
 const BoxWrap = styled.div`
-  width: 50%;
+  width: 100%;
   height: 100%;
-  display: flex;
   background-color: #bbb;
 `;
 
@@ -27,7 +26,7 @@ const VerticalRange = styled.input.attrs(props => ({
 `;
 
 const VolumeRange = styled(VerticalRange)`
-  width: 5%;
+  width: 10%;
   height: calc(100% - 20px);
 `;
 
@@ -45,12 +44,14 @@ const TimeRange = styled.input.attrs(props => ({
   vertical-align: middle;
 `;
 
-const RightBox = styled.div`
-  width:95%;
+const ControlBox = styled.div`
+  width:100%;
+  height: 80%;
+  display: flex;
 `;
 
 const MusicEffect = styled.div`
-  height:80%;
+  height:100%;
   background-color:yellow;
 `;
 
@@ -67,12 +68,12 @@ const Foreground = styled.div`
 `;
 
 const Navigation = styled.div`
-	position: absolute;
-	top: 50px;
-	bottom: 0;
+  position: relative;
+  width: 100%;
+	top: 20px;
+  left:0px;
 	background-color: rgba(64, 64, 64, 0.3);
-	overflow-x: scroll;
-	pointer-events: auto;
+  pointer-events: auto;
 `;
 
 const NavigationPad = styled.div`
@@ -86,23 +87,20 @@ const SelectTitle = styled.td`
 	color: rgb(192, 192, 192);
 `;
 
-const SelectBox = styled.td`
+const SelectBox = styled.div`
 	padding: 2px 10px;
-  text-align: center;
 `;
 
-const FileSelector = styled.td`
+const FileSelector = styled.div`
 	padding: 10px;
-	text-align: center;
 `;
 
-const MusicName = styled.p`
-	position: absolute;
-	right: 0;
-	bottom: 0;
-	padding: 10px 10px 10px 10px;
+const MusicName = styled.div`
+  margin: 0;
+	padding: 10px;
 	text-align: right;
 	color: red;
+  max-width: calc(100% - 20px);
 	pointer-events: auto;
 `;
 
@@ -144,16 +142,22 @@ export default class TableBox extends React.Component {
   loadAudio(url) {
     if (this.music.isInitializedAudio()) {
       this.music.audioElement.src = url; //set
+      this.music.stopAudio();
+      console.log(1);
     } else {
       this.setState({audioUrl: url});
+      console.log(2);
     }
-    this.props.canvas().drawCanvas(url);
   }
 
   // 音声ファイルの読み込み
   loadAudioFile(file) {
-    this.setState({musicName:"Playing music is " + file.name + "."})
-    this.loadAudio(URL.createObjectURL(file));
+    if(!!file){
+      this.setState({musicName:"Playing music is " + file.name + "."})
+      let url = URL.createObjectURL(file);
+      this.loadAudio(url);
+      this.props.canvas().drawCanvas(url);
+    }
   }
 
   // 再生ボタンを押下
@@ -190,8 +194,8 @@ export default class TableBox extends React.Component {
     const mN = this.state.musicName;
     return(
       <BoxWrap>
+        <ControlBox>
         <VolumeRange min="0" max="100" defaultValue="25" ref={this.masterSlider}/>
-        <RightBox>
           <MusicEffect>
             {(()=>{
               const items = [];
@@ -203,46 +207,33 @@ export default class TableBox extends React.Component {
               return items;
             })()}
           </MusicEffect>
-          <MusicControl>
+        </ControlBox>
+        <MusicControl>
             <HeadInputButton value="start" onClick={(e)=>this.onClickPlayButton(e)} />
             <TimeRange min="0" max="1000" defaultValue="0" ref={this.timeSeek}/>
           </MusicControl>
-          <Foreground>
-
-					<Navigation>
-						<NavigationPad>
-              <table>
-                <tbody>
-                <tr>
-                  <SelectTitle>PRESET</SelectTitle>
-                  <SelectBox>
-                    <select ref={this.frequencyPreset} onChange={(e)=>this.onChangedPreset(e)}>
-                      {(()=>{
-                        const option = ["デフォルト","ロック","ポップ","ダンス","ジャズ","古いラジオ","水中","低音","中音","高音"];
-                        const items = [];
-                        for (let i=0;i<option.length;i++) {
-                          items.push(
-                            <option key={i} value={i}>{option[i]}</option>
-                          );
-                        }
-                        return items;
-                      })()}
-                    </select>
-                  </SelectBox>
-                </tr>
-
-                <tr>
-                  <FileSelector colSpan={2} onChange={(e)=>this.onSelectedFile(e)}>
-                    <input type="file" accept="audio/*"/>
-                  </FileSelector>
-                </tr>
-                </tbody>
-              </table>
-						</NavigationPad>
-            <MusicName>{mN}</MusicName>
-					</Navigation>
-        </Foreground>
-        </RightBox>
+        <Navigation>
+        <NavigationPad>
+              <SelectBox>
+                <select ref={this.frequencyPreset} onChange={(e)=>this.onChangedPreset(e)}>
+                  {(()=>{
+                    const option = ["デフォルト","ロック","ポップ","ダンス","ジャズ","古いラジオ","水中","低音","中音","高音"];
+                    const items = [];
+                    for (let i=0;i<option.length;i++) {
+                      items.push(
+                        <option key={i} value={i}>{option[i]}</option>
+                      );
+                    }
+                    return items;
+                  })()}
+                </select>
+              </SelectBox>
+              <FileSelector colSpan={2} onChange={(e)=>this.onSelectedFile(e)}>
+                <input type="file" accept="audio/*"/>
+              </FileSelector>
+        </NavigationPad>
+        <MusicName>{mN}</MusicName>
+        </Navigation>
       </BoxWrap>
     )
   }

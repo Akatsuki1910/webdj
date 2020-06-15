@@ -73,7 +73,7 @@ export default class Music {
 
 	// 音声ファイルが再生中か否か
 	isPlayAudio() {
-		return !this.audioElement.paused
+		return !this.audioElement.paused;
 	}
 
 	// 音声ファイルを再生する

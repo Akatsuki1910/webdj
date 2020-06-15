@@ -5,13 +5,13 @@ import DrawCanvas from "./drawCanvas";
 import Tablebox from "./tableBox";
 
 const GlobalStyle = createGlobalStyle`
-body {
-  margin: 0;
-}
-::-webkit-scrollbar {
-  width: 0;
-  height: 0;
-}
+	body {
+		margin: 0;
+	}
+	::-webkit-scrollbar {
+		width: 0;
+		height: 0;
+	}
 `;
 
 const Screen = styled.div`
@@ -75,8 +75,6 @@ class Main extends React.Component {
 
 	// 初期化
 	onLoadf(event) {
-		//表示
-		console.log(this.canvas);
 		// その他の初期化
 		this.onResize();
 	}
