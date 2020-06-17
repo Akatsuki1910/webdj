@@ -1,6 +1,5 @@
 import PeakAnalyzer from "./PeakAnalyzer";
 import * as PIXI from 'pixi.js';
-const js = import("./wasm/index.js").catch(console.error);
 
 export default class DrawCanvas {
 
@@ -36,10 +35,10 @@ export default class DrawCanvas {
   }
 
   drawWaveform(wave) {
+    const js = import("./@akatsuki1910/rust-create-circle/rust_create_circle.js");
     js.then(js => {
       js.greet("WebAssembly");
     });
-    console.log(123);
     // var width = this.width;
     // var height =this.height;
     // this.renderer.resize(width, height);
