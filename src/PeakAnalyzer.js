@@ -10,7 +10,7 @@ export default class PeakAnalyzer {
    * @return {*}
    */
   analyze(url, peakLength) {
-    this.promise = new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       const req = new XMLHttpRequest();
       req.open('GET', url, true);
       req.responseType = 'arraybuffer';
@@ -23,7 +23,6 @@ export default class PeakAnalyzer {
       };
       req.send();
     });
-    return this.promise;
   }
 
   onLoadSound(audioData, peakLength, resolve, reject) {

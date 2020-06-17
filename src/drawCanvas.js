@@ -1,5 +1,6 @@
 import PeakAnalyzer from "./PeakAnalyzer";
 import * as PIXI from 'pixi.js';
+const js = import("./wasm/index.js").catch(console.error);
 
 export default class DrawCanvas {
 
@@ -35,43 +36,47 @@ export default class DrawCanvas {
   }
 
   drawWaveform(wave) {
-    var width = this.width;
-    var height =this.height;
-    this.renderer.resize(width, height);
-    // var halfW = width/2;
-    var halfH = height/2;
-    this.canvas.appendChild(this.renderer.view);
-    const barMargin = 0;
-    const barWidth = width / (wave[0].length - barMargin);
-    let sample;
-    let barHeight;
+    js.then(js => {
+      js.greet("WebAssembly");
+    });
+    console.log(123);
+    // var width = this.width;
+    // var height =this.height;
+    // this.renderer.resize(width, height);
+    // // var halfW = width/2;
+    // var halfH = height/2;
+    // this.canvas.appendChild(this.renderer.view);
+    // const barMargin = 0;
+    // const barWidth = width / (wave[0].length - barMargin);
+    // let sample;
+    // let barHeight;
 
-    let waveMaxLength = Math.max(this.memWaveLength,wave[0].length);
-    for(var p=0;p<wave.length;p++){
-      for (let i = 0; i < waveMaxLength; i++) {
-        if(this.g[p][i] !== undefined){
-          this.g[p][i].clear();
-        }else{
-          this.g[p][i] = new PIXI.Graphics();
-        }
-        if(i<wave[0].length){
-          sample = wave[p][i];
-          barHeight = sample * halfH /2;
-          this.g[p][i].x = i * (barWidth + barMargin);
-          var bh = (p===0)?-barHeight:0;
-          this.g[p][i].y = halfH + bh;
-          this.g[p][i].width = barWidth;
-          this.g[p][i].height = barHeight;
-          this.g[p][i].beginFill(0x1355a5);
-          this.g[p][i].drawRect(0,0,barWidth + barMargin,barHeight);
-          this.g[p][i].endFill();
-          this.stage.addChild(this.g[p][i]);
-        }
-      }
-    }
+    // let waveMaxLength = Math.max(this.memWaveLength,wave[0].length);
+    // for(var p=0;p<wave.length;p++){
+    //   for (let i = 0; i < waveMaxLength; i++) {
+    //     if(this.g[p][i] !== undefined){
+    //       this.g[p][i].clear();
+    //     }else{
+    //       this.g[p][i] = new PIXI.Graphics();
+    //     }
+    //     if(i<wave[0].length){
+    //       sample = wave[p][i];
+    //       barHeight = sample * halfH /2;
+    //       this.g[p][i].x = i * (barWidth + barMargin);
+    //       var bh = (p===0)?-barHeight:0;
+    //       this.g[p][i].y = halfH + bh;
+    //       this.g[p][i].width = barWidth;
+    //       this.g[p][i].height = barHeight;
+    //       this.g[p][i].beginFill(0x1355a5);
+    //       this.g[p][i].drawRect(0,0,barWidth + barMargin,barHeight);
+    //       this.g[p][i].endFill();
+    //       this.stage.addChild(this.g[p][i]);
+    //     }
+    //   }
+    // }
 
-    this.memWaveLength = wave[0].length;
-    this.renderer.render(this.stage);
+    // this.memWaveLength = wave[0].length;
+    // this.renderer.render(this.stage);
     // cancelAnimationFrame(this.loop);
     // this.loop();
   }
