@@ -8,6 +8,7 @@ export default class Music {
 	audioPrevInputs;
 	audioPrevOutputs;
 	audioWorkBuffer;
+	audioSrc;
 
 	constructor(nfb, fs, ts, ms) {
 		this.NUM_SAMPLES = 1 << nfb; // 2^10 = 1024
@@ -48,7 +49,7 @@ export default class Music {
 
 		this.audioElement = new Audio();
 		this.audioElement.loop = true;
-		this.audioElement.autoplay = true;
+		this.audioElement.autoplay = false;
 		this.audioElement.addEventListener("timeupdate", (e)=>this.onUpdatedAudioTime(e));
 
 		this.audioSource = this.audioContext.createMediaElementSource(this.audioElement);
@@ -62,14 +63,19 @@ export default class Music {
 
 	// 音声ファイルの再生時間が更新
 	onUpdatedAudioTime(event) {
-		this.ts.current.value = 1000 * (this.audioElement.currentTime / this.audioElement.duration);
+		if(this.audioSrc !== this.audioElement.src){
+			this.ts.current.value=0;
+			this.audioSrc = this.audioElement.src;
+		}else{
+			this.ts.current.value = 1000 * (this.audioElement.currentTime / this.audioElement.duration);
+		}
 	}
 
 	//音楽をセット
 	setAudio(audio){
 		this.audioElement.src = audio;
 		this.stopAudio();
-		this.ts.current.value = 0;
+		// this.ts.current.value = 0;
 	}
 
 	// onMusicTime() {

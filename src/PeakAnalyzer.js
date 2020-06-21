@@ -9,6 +9,9 @@ export default class PeakAnalyzer {
    * @param peakLength 欲しいpeakの配列の長さ
    * @return {*}
    */
+  aryMax = (a, b) => Math.max(a, b);
+  aryMin = (a, b) => Math.min(a, b);
+
   analyze(url, peakLength) {
     return new Promise((resolve, reject) => {
       const req = new XMLHttpRequest();
@@ -54,7 +57,7 @@ export default class PeakAnalyzer {
       step = 1;
     }
     let peaks = [];
-    for (let i = 0, len = array.length; i < len; i += step) {
+    for (let i = 0; i < array.length; i += step) {
       const peak = this.getPeak(array, i, i + step);
       peaks.push(peak);
     }
@@ -63,13 +66,10 @@ export default class PeakAnalyzer {
 
   getPeak(array, startIndex, endIndex) {
     const sliced = array.slice(startIndex, endIndex);
+    // console.log(sliced.length);
     let peak = -100;
-    for (let i = 0, len = sliced.length; i < len; i++) {
-      const sample = sliced[i];
-      if (sample > peak) {
-        peak = sample;
-      }
-    }
+    let max = sliced.reduce(this.aryMax);
+    peak = Math.max(peak,max);
     return peak;
   }
 }

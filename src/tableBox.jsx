@@ -126,6 +126,7 @@ export default class TableBox extends React.Component {
 
   // 音声ファイルを読み込む
   loadAudio(url) {
+    console.log("music set");
     if (this.music.isInitializedAudio()) {
       this.music.setAudio(url); //set
     } else {
