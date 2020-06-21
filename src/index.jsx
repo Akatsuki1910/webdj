@@ -20,14 +20,11 @@ const Screen = styled.div`
   height: 100vh;
 `;
 
-const WaveCanvas = styled.div`
-  width: 100%;
-  height: 50%;
-`;
+const WaveCanvas = styled.div``;
 
-const Canvas = styled.div`
-  width: 100%;
-	height: 50%;
+const Canvas = styled.canvas`
+  margin:0;
+	display: block;
 	background: black;
 `;
 
@@ -88,8 +85,11 @@ class Main extends React.Component {
 	// 画面のサイズ変更
 	onResize(event) {
 		console.log("onResize");
-		this.dc[0].canvasResize(window.innerWidth,window.innerHeight/4);
-		this.dc[1].canvasResize(window.innerWidth,window.innerHeight/4);
+		for(var i=0;i<2;i++){
+			this.dc[i].canvasResize(window.innerWidth,window.innerHeight/4);
+			// this.canvas[i].width = this.w;
+			// this.canvas[i].height = this.h;
+		}
 	}
 
 	returnCanvas(i){

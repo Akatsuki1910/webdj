@@ -14,7 +14,8 @@
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1",
     "soundjs": "^1.0.1",
-    "styled-components": "^5.1.1"
+    "styled-components": "^5.1.1",
+    "external": "file:./rust-create-circle"
   },
   "scripts": {
     "start": "react-app-rewired start",
