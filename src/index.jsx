@@ -54,10 +54,11 @@ class Main extends React.Component {
 	constructor(){
 		super();
 		this.music = "";
-		this.audioUrl = "";
 		this.canvas = "";
 		this.dc = [];
 		this.canvas = [];
+
+		this.DJbooth = 2;
 	}
 
 	componentDidMount() {
@@ -66,8 +67,9 @@ class Main extends React.Component {
 		window.onunload =(e)=>{this.onUnloadf(e)};
 		window.onresize =(e)=>{this.onResize(e)};
 
-		this.dc[0] = new DrawCanvas(this.canvas[0],window.innerWidth,window.innerHeight/4);
-		this.dc[1] = new DrawCanvas(this.canvas[1],window.innerWidth,window.innerHeight/4);
+		for(var i=0;i<this.DJbooth;i++){
+			this.dc[i] = new DrawCanvas("canvas"+i,this.canvas[i],window.innerWidth,window.innerHeight/4);
+		}
 	}
 
 	// 初期化
@@ -85,10 +87,8 @@ class Main extends React.Component {
 	// 画面のサイズ変更
 	onResize(event) {
 		console.log("onResize");
-		for(var i=0;i<2;i++){
+		for(var i=0;i<this.DJbooth;i++){
 			this.dc[i].canvasResize(window.innerWidth,window.innerHeight/4);
-			// this.canvas[i].width = this.w;
-			// this.canvas[i].height = this.h;
 		}
 	}
 
@@ -102,14 +102,30 @@ class Main extends React.Component {
       <GlobalStyle />
       <Screen>
         <WaveCanvas>
-          <Canvas id="canvas" ref={elem => this.canvas[0] = elem}></Canvas>
-					<Canvas id="canvas" ref={elem => this.canvas[1] = elem}></Canvas>
+					{(()=>{
+						const items = [];
+						for (let i=0;i<this.DJbooth;i++) {
+							const id = "canvas"+i;
+							items.push(
+								<Canvas key={id} id={id} ref={elem => this.canvas[i] = elem}></Canvas>
+							);
+						}
+						return items;
+					})()}
         </WaveCanvas>
 				<DJtabel>
 					<Baf>
-						<Tablebox key="0" canvas={()=>this.returnCanvas(0)}/>
-						<Publicbox>&nbsp;</Publicbox>
-						<Tablebox key="1" canvas={()=>this.returnCanvas(1)}/>
+						{(()=>{
+							const items = [];
+							for (let i=0;i<this.DJbooth;i++) {
+								const key = "table"+i;
+								items.push(
+									<Tablebox key={key} num={i} canvas={()=>this.returnCanvas(i)}/>
+								);
+								if(i+1!==this.DJbooth)items.push(<Publicbox key={i}>&nbsp;</Publicbox>);
+							}
+							return items;
+						})()}
 					</Baf>
 				</DJtabel>
       </Screen>

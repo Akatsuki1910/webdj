@@ -108,7 +108,7 @@ export default class TableBox extends React.Component {
     super(props);
     this.state = {
       musicName: "None",
-      audioUrl: this.props.audioUrl,
+      audioUrl: "",
       NUM_FREQUENCY_BUNDLES: 10,
     };
     this.dc = props.canvas;

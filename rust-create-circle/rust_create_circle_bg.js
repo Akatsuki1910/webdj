@@ -216,9 +216,12 @@ export function main_js() {
 }
 
 /**
+* @param {string} id
 */
-export function clear_canvas() {
-    wasm.clear_canvas();
+export function clear_canvas(id) {
+    var ptr0 = passStringToWasm0(id, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    var len0 = WASM_VECTOR_LEN;
+    wasm.clear_canvas(ptr0, len0);
 }
 
 let cachegetFloat64Memory0 = null;
@@ -236,17 +239,20 @@ function passArrayF64ToWasm0(arg, malloc) {
     return ptr;
 }
 /**
+* @param {string} id
 * @param {Float64Array} wave
 * @param {number} p
 * @param {number} margin
 * @param {string} color
 */
-export function create_wave(wave, p, margin, color) {
-    var ptr0 = passArrayF64ToWasm0(wave, wasm.__wbindgen_malloc);
+export function create_wave(id, wave, p, margin, color) {
+    var ptr0 = passStringToWasm0(id, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
     var len0 = WASM_VECTOR_LEN;
-    var ptr1 = passStringToWasm0(color, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    var ptr1 = passArrayF64ToWasm0(wave, wasm.__wbindgen_malloc);
     var len1 = WASM_VECTOR_LEN;
-    wasm.create_wave(ptr0, len0, p, margin, ptr1, len1);
+    var ptr2 = passStringToWasm0(color, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    var len2 = WASM_VECTOR_LEN;
+    wasm.create_wave(ptr0, len0, ptr1, len1, p, margin, ptr2, len2);
 }
 
 function handleError(f) {

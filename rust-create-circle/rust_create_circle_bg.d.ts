@@ -3,8 +3,8 @@
 export const memory: WebAssembly.Memory;
 export function greet(a: number, b: number): void;
 export function main_js(): void;
-export function clear_canvas(): void;
-export function create_wave(a: number, b: number, c: number, d: number, e: number, f: number): void;
+export function clear_canvas(a: number, b: number): void;
+export function create_wave(a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number): void;
 export function __wbindgen_malloc(a: number): number;
 export function __wbindgen_realloc(a: number, b: number, c: number): number;
 export const __wbindgen_export_2: WebAssembly.Table;

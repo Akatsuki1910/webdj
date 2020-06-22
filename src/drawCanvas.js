@@ -2,11 +2,12 @@ import PeakAnalyzer from "./PeakAnalyzer";
 
 export default class DrawCanvas {
 
-  constructor(canvas,w,h){
+  constructor(id,canvas,w,h){
     this.canvas = canvas;
     this.g = [];
     this.g[0] = [];
     this.g[1] = [];
+    this.id = id;
 
     this.width = w;
     this.height =h;
@@ -43,9 +44,9 @@ export default class DrawCanvas {
 
   drawWaveform(wave) {
     this.wasm.greet("WebAssembly");
-    this.wasm.clear_canvas();
+    this.wasm.clear_canvas(this.id);
     for(var i=0;i<wave.length;i++){
-      this.wasm.create_wave(wave[i],i,0,"blue");
+      this.wasm.create_wave(this.id,wave[i],i,0,"blue");
     }
   }
 
