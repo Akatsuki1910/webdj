@@ -176,30 +176,6 @@ function getInt32Memory0() {
     }
     return cachegetInt32Memory0;
 }
-
-function makeMutClosure(arg0, arg1, dtor, f) {
-    const state = { a: arg0, b: arg1, cnt: 1 };
-    const real = (...args) => {
-        // First up with a closure we increment the internal reference
-        // count. This ensures that the Rust closure environment won't
-        // be deallocated while we're invoking it.
-        state.cnt++;
-        const a = state.a;
-        state.a = 0;
-        try {
-            return f(a, state.b, ...args);
-        } finally {
-            if (--state.cnt === 0) wasm.__wbindgen_export_2.get(dtor)(a, state.b);
-            else state.a = a;
-        }
-    };
-    real.original = state;
-    return real;
-}
-function __wbg_adapter_16(arg0, arg1) {
-    wasm._dyn_core__ops__function__FnMut_____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__hedf7c98387df03bf(arg0, arg1);
-}
-
 /**
 * @param {string} name
 */
@@ -255,6 +231,40 @@ export function create_wave(id, wave, p, margin, color) {
     wasm.create_wave(ptr0, len0, ptr1, len1, p, margin, ptr2, len2);
 }
 
+let cachegetFloat32Memory0 = null;
+function getFloat32Memory0() {
+    if (cachegetFloat32Memory0 === null || cachegetFloat32Memory0.buffer !== wasm.memory.buffer) {
+        cachegetFloat32Memory0 = new Float32Array(wasm.memory.buffer);
+    }
+    return cachegetFloat32Memory0;
+}
+
+function passArrayF32ToWasm0(arg, malloc) {
+    const ptr = malloc(arg.length * 4);
+    getFloat32Memory0().set(arg, ptr / 4);
+    WASM_VECTOR_LEN = arg.length;
+    return ptr;
+}
+
+function getArrayF32FromWasm0(ptr, len) {
+    return getFloat32Memory0().subarray(ptr / 4, ptr / 4 + len);
+}
+/**
+* @param {Float32Array} arr
+* @param {number} peak_length
+* @returns {Float32Array}
+*/
+export function get_peaks(arr, peak_length) {
+    var ptr0 = passArrayF32ToWasm0(arr, wasm.__wbindgen_malloc);
+    var len0 = WASM_VECTOR_LEN;
+    wasm.get_peaks(8, ptr0, len0, peak_length);
+    var r0 = getInt32Memory0()[8 / 4 + 0];
+    var r1 = getInt32Memory0()[8 / 4 + 1];
+    var v1 = getArrayF32FromWasm0(r0, r1).slice();
+    wasm.__wbindgen_free(r0, r1 * 4);
+    return v1;
+}
+
 function handleError(f) {
     return function () {
         try {
@@ -270,16 +280,6 @@ function isLikeNone(x) {
     return x === undefined || x === null;
 }
 
-export const __wbindgen_cb_drop = function(arg0) {
-    const obj = takeObject(arg0).original;
-    if (obj.cnt-- == 1) {
-        obj.a = 0;
-        return true;
-    }
-    var ret = false;
-    return ret;
-};
-
 export const __wbindgen_object_drop_ref = function(arg0) {
     takeObject(arg0);
 };
@@ -292,11 +292,6 @@ export const __wbindgen_string_new = function(arg0, arg1) {
 export const __wbg_log_cc6b9ddc6ca5449d = function(arg0) {
     console.log(getObject(arg0));
 };
-
-export const __wbg_requestAnimationFrame_96f88ce2d311332e = handleError(function(arg0, arg1) {
-    var ret = getObject(arg0).requestAnimationFrame(getObject(arg1));
-    return ret;
-});
 
 export const __wbg_document_bcf9d67bc56e8c6d = function(arg0) {
     var ret = getObject(arg0).document;
@@ -421,10 +416,5 @@ export const __wbindgen_object_clone_ref = function(arg0) {
 export const __wbg_instanceof_Window_d64060d13377409b = function(arg0) {
     var ret = getObject(arg0) instanceof Window;
     return ret;
-};
-
-export const __wbindgen_closure_wrapper54 = function(arg0, arg1, arg2) {
-    var ret = makeMutClosure(arg0, arg1, 28, __wbg_adapter_16);
-    return addHeapObject(ret);
 };
 

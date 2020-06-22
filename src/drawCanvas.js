@@ -33,7 +33,7 @@ export default class DrawCanvas {
 
   drawCanvas(url){
     this.url = url;
-    var analyzer = new PeakAnalyzer();
+    var analyzer = new PeakAnalyzer(this.wasm);
     analyzer.analyze(url, window.innerWidth)
       .then((peaksArr) => {
         this.drawWaveform(peaksArr);
