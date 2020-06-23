@@ -1,4 +1,4 @@
-import * as wasm from './rust_create_circle_bg.wasm';
+import * as wasm from './rust_wasm_bg.wasm';
 
 const heap = new Array(32).fill(undefined);
 

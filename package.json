@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@akatsuki1910/rust-create-circle": "^0.1.0",
     "@testing-library/jest-dom": "^5.10.1",
     "@testing-library/react": "^10.2.1",
     "@testing-library/user-event": "^11.4.2",
@@ -15,7 +14,7 @@
     "react-scripts": "3.4.1",
     "soundjs": "^1.0.1",
     "styled-components": "^5.1.1",
-    "external": "file:./rust-create-circle"
+    "external": "file:./rust-wasm"
   },
   "scripts": {
     "start": "react-app-rewired start",

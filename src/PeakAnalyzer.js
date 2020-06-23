@@ -44,7 +44,7 @@ export default class PeakAnalyzer {
   }
 
   getPeaks(array, peakLength) {
-    // let step;
+    console.log(array.length);
     if (!peakLength) {
       peakLength = 9000;
     }
