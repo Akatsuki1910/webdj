@@ -20,7 +20,7 @@ export default class DrawCanvas {
     this.loadWasm();
   }
 
-  loadWasm = async () => {
+  async loadWasm() {
     console.log("wasm loading");
     try {
       this.wasm = await import('external');
@@ -28,7 +28,7 @@ export default class DrawCanvas {
     } catch(err) {
       console.error(`Unexpected error in loadWasm. [Message: ${err.message}]`);
     }
-  };
+  }
 
 
   drawCanvas(url){

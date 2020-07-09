@@ -137,7 +137,7 @@ export default class TableBox extends React.Component {
   // 音声ファイルの読み込み
   loadAudioFile(file) {
     if(!!file){
-      this.setState({musicName:"Playing music is " + file.name + "."})
+      this.setState({musicName:"Playing music is " + file.name + "."});
       let url = URL.createObjectURL(file);
       this.loadAudio(url);
       this.props.canvas().drawCanvas(url);

@@ -1,14 +1,14 @@
 export default class PeakAnalyzer {
 
-  audioCtx = new AudioContext();
-  promise = null;
-
   constructor(wasm){
     this.wasm = wasm;
+
+    this.audioCtx = new AudioContext();
+    this.promise = null;
   }
 
-  aryMax = (a, b) => Math.max(a, b);
-  aryMin = (a, b) => Math.min(a, b);
+  // aryMax(a, b) {Math.max(a, b);}
+  // aryMin(a, b) {Math.min(a, b);}
 
   analyze(url, peakLength) {
     return new Promise((resolve, reject) => {
