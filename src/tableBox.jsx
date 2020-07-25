@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import Music from "./music";
-import Tsumami from './tsumami/index';
+import Tsumami from './tsumami';
 
 const BoxWrap = styled.div`
   width: 100%;
@@ -54,6 +54,7 @@ const ControlBox = styled.div`
 const MusicEffect = styled.div`
   height:100%;
   background-color:yellow;
+  display:none;
 `;
 
 const MusicControl = styled.div`
@@ -89,6 +90,10 @@ const MusicName = styled.div`
 	color: red;
   max-width: calc(100% - 20px);
 	pointer-events: auto;
+`;
+
+const TsumamiBox = styled.div`
+  display:inline-block;
 `;
 
 const FREQUENCIES_PRESETS = [
@@ -128,7 +133,30 @@ export default class TableBox extends React.Component {
   }
 
   componentDidMount(){
-    new Tsumami({target:document.getElementById("tsumami"+this.num)});
+    let tsumamiValue = [];
+    const eN=[0,3,6];
+    for(var i=0;i<3;i++){
+      const tfc = this.frequencySliders[eN[i]].current;
+      tsumamiValue[i] = (() => {
+        const val = Object.create(null);
+        Object.defineProperty(val, 'value', {
+          set: (value) => {
+            tfc.value = Math.round(value)+100;
+            this.onChangedFrequencyVolume();
+          }
+        });
+        return val;
+      })();
+
+      const option = {
+        obj: tsumamiValue[i],
+        mode: "center",
+        centerValue:100,
+        target:document.getElementById("tsumami"+this.num+i)
+      }
+
+      new Tsumami(option);
+    }
   }
 
   // 音声ファイルを読み込む
@@ -177,7 +205,7 @@ export default class TableBox extends React.Component {
   }
 
   // 各周波数もリュームを変更
-  onChangedFrequencyVolume(event) {
+  onChangedFrequencyVolume() {
     this.frequencyPreset.current.value = -1;
     const efectorNum = [[0,1,2],[3,4,5],[6,7,8,9]];
 
@@ -191,49 +219,57 @@ export default class TableBox extends React.Component {
 
   render(){
     const mN = this.state.musicName;
-    const tsumamiId = "tsumami"+this.num;
     return(
       <BoxWrap>
         <ControlBox>
-        <VolumeRange min="0" max="100" defaultValue="25" ref={this.masterSlider}/>
+          <VolumeRange min="0" max="100" defaultValue="25" ref={this.masterSlider}/>
           <MusicEffect>
             {(()=>{
               const items = [];
               for (let i=0;i<this.state.NUM_FREQUENCY_BUNDLES;i++) {
                 items.push(
-                  <RangeSlider key={i} ref={this.frequencySliders[i]} type="range" min="0" max="200" defaultValue="100" title="" onChange={(e)=>this.onChangedFrequencyVolume(e)} />
+                  <RangeSlider key={i} ref={this.frequencySliders[i]} type="range" min="0" max="200" defaultValue="100" title="" onChange={(e)=>this.onChangedFrequencyVolume()} />
                 );
               }
               return items;
             })()}
           </MusicEffect>
           <div>
-            <div id={tsumamiId} ref={this.tsumami}></div>
+            {(()=>{
+              const items = [];
+              for (let i=0;i<3;i++) {
+                const tsumamiId = "tsumami"+this.num+i;
+                items.push(
+                  <TsumamiBox id={tsumamiId} ref={this.tsumami}></TsumamiBox>
+                );
+              }
+              return items;
+            })()}
           </div>
         </ControlBox>
         <MusicControl>
-            <HeadInputButton value="start" onClick={(e)=>this.onClickPlayButton(e)} />
-            <TimeRange min="0" max="1000" defaultValue="0" ref={this.timeSeek}/>
-          </MusicControl>
+          <HeadInputButton value="start" onClick={(e)=>this.onClickPlayButton(e)} />
+          <TimeRange min="0" max="1000" defaultValue="0" ref={this.timeSeek}/>
+        </MusicControl>
         <Navigation>
         <NavigationPad>
-              <SelectBox>
-                <select ref={this.frequencyPreset} onChange={(e)=>this.onChangedPreset(e)}>
-                  {(()=>{
-                    const option = ["デフォルト","ロック","ポップ","ダンス","ジャズ","古いラジオ","水中","低音","中音","高音"];
-                    const items = [];
-                    for (let i=0;i<option.length;i++) {
-                      items.push(
-                        <option key={i} value={i}>{option[i]}</option>
-                      );
-                    }
-                    return items;
-                  })()}
-                </select>
-              </SelectBox>
-              <FileSelector colSpan={2} onChange={(e)=>this.onSelectedFile(e)}>
-                <input type="file" accept="audio/*"/>
-              </FileSelector>
+          <SelectBox>
+            <select ref={this.frequencyPreset} onChange={(e)=>this.onChangedPreset(e)}>
+              {(()=>{
+                const option = ["デフォルト","ロック","ポップ","ダンス","ジャズ","古いラジオ","水中","低音","中音","高音"];
+                const items = [];
+                for (let i=0;i<option.length;i++) {
+                  items.push(
+                    <option key={i} value={i}>{option[i]}</option>
+                  );
+                }
+                return items;
+              })()}
+            </select>
+          </SelectBox>
+          <FileSelector colSpan={2} onChange={(e)=>this.onSelectedFile(e)}>
+            <input type="file" accept="audio/*"/>
+          </FileSelector>
         </NavigationPad>
         <MusicName>{mN}</MusicName>
         </Navigation>
