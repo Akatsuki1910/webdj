@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import Music from "./music";
+import Tsumami from './tsumami/index';
 
 const BoxWrap = styled.div`
   width: 100%;
@@ -111,6 +112,7 @@ export default class TableBox extends React.Component {
       audioUrl: "",
       NUM_FREQUENCY_BUNDLES: 10,
     };
+    this.num = props.num;
     this.dc = props.canvas;
     this.timeSeek = React.createRef();
     this.masterSlider = React.createRef();
@@ -122,6 +124,11 @@ export default class TableBox extends React.Component {
 
     this.music = new Music(this.state.NUM_FREQUENCY_BUNDLES,this.frequencySliders,this.timeSeek,this.masterSlider);
 
+    this.tsumami = React.createRef();
+  }
+
+  componentDidMount(){
+    new Tsumami({target:document.getElementById("tsumami"+this.num)});
   }
 
   // 音声ファイルを読み込む
@@ -172,10 +179,19 @@ export default class TableBox extends React.Component {
   // 各周波数もリュームを変更
   onChangedFrequencyVolume(event) {
     this.frequencyPreset.current.value = -1;
+    const efectorNum = [[0,1,2],[3,4,5],[6,7,8,9]];
+
+    for(var i=0;i<efectorNum.length;i++){
+      var eN = efectorNum[i];
+      for(var l=1;l<eN.length;l++){
+        this.frequencySliders[eN[l]].current.value = this.frequencySliders[eN[0]].current.value;
+      }
+    }
   }
 
   render(){
     const mN = this.state.musicName;
+    const tsumamiId = "tsumami"+this.num;
     return(
       <BoxWrap>
         <ControlBox>
@@ -191,6 +207,9 @@ export default class TableBox extends React.Component {
               return items;
             })()}
           </MusicEffect>
+          <div>
+            <div id={tsumamiId} ref={this.tsumami}></div>
+          </div>
         </ControlBox>
         <MusicControl>
             <HeadInputButton value="start" onClick={(e)=>this.onClickPlayButton(e)} />

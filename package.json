@@ -6,6 +6,7 @@
     "@testing-library/jest-dom": "^5.10.1",
     "@testing-library/react": "^10.2.1",
     "@testing-library/user-event": "^11.4.2",
+    "external": "file:./rust-wasm",
     "jshint": "^2.11.1",
     "pixi.js": "^5.2.4",
     "preloadjs": "^1.0.1",
@@ -13,8 +14,7 @@
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1",
     "soundjs": "^1.0.1",
-    "styled-components": "^5.1.1",
-    "external": "file:./rust-wasm"
+    "styled-components": "^5.1.1"
   },
   "scripts": {
     "start": "react-app-rewired start",
