@@ -30,19 +30,9 @@ const Canvas = styled.canvas`
 
 const DJtabel = styled.div`
 	position: relative;
-	width: 100%;
-	min-width: 400px;
-	padding-top: 20%;
-`;
-
-const Baf = styled.div`
 	display: flex;
 	justify-content: center;
-	position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
-  height: 100%;
 `;
 
 const Publicbox = styled.div`
@@ -114,19 +104,17 @@ class Main extends React.Component {
 					})()}
         </WaveCanvas>
 				<DJtabel>
-					<Baf>
-						{(()=>{
-							const items = [];
-							for (let i=0;i<this.DJbooth;i++) {
-								const key = "table"+i;
-								items.push(
-									<Tablebox key={key} num={i} canvas={()=>this.returnCanvas(i)}/>
-								);
-								if(i+1!==this.DJbooth)items.push(<Publicbox key={i}>&nbsp;</Publicbox>);
-							}
-							return items;
-						})()}
-					</Baf>
+					{(()=>{
+						const items = [];
+						for (let i=0;i<this.DJbooth;i++) {
+							const key = "table"+i;
+							items.push(
+								<Tablebox key={key} num={i} canvas={()=>this.returnCanvas(i)}/>
+							);
+							if(i+1!==this.DJbooth)items.push(<Publicbox key={i}>&nbsp;</Publicbox>);
+						}
+						return items;
+					})()}
 				</DJtabel>
       </Screen>
       </>

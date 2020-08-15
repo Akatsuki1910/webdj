@@ -15,6 +15,9 @@ export default class Music {
 		this.fs = fs;
 		this.ts = ts;
 		this.ms = ms;
+
+		// this.ts.current.onpointerdown = () => console.log(1);
+		// this.ts.current.onpointerup = () => console.log(2);
 	}
 
 	////////////////////////////////////////////////////////////////
